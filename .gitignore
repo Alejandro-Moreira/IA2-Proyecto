@@ -1,0 +1,23 @@
+# Entornos virtuales
+venv/
+env/
+.env
+
+# Datasets y archivos pesados (¡CRÍTICO!)
+data/
+*.csv
+*.tsv
+*.zip
+
+# Modelos y Checkpoints
+models/
+*.pt
+*.pth
+*.h5
+*.bin
+checkpoint-*/
+
+# Archivos de sistema y Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
