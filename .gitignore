@@ -1,15 +1,31 @@
-# Entornos virtuales
+# Entornos virtuales y variables de entorno
+.venv/
 venv/
+ENV/
 env/
 .env
 
-# Datasets y archivos pesados (¡CRÍTICO!)
-data/
+# Bytecode y cache de Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+
+# Datos crudos, intermedios y procesados (Protección LOPDP y archivos pesados)
+data/raw/*
+!data/raw/.gitkeep
+data/interim/*
+!data/interim/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
 *.csv
 *.tsv
 *.zip
 
-# Modelos y Checkpoints
+# Modelos, pesos y checkpoints
 models/
 *.pt
 *.pth
@@ -17,7 +33,19 @@ models/
 *.bin
 checkpoint-*/
 
-# Archivos de sistema y Python
-__pycache__/
-*.pyc
-.ipynb_checkpoints/
+# Reportes generados (mantener estructura con .gitkeep)
+reports/figuras/*
+!reports/figuras/.gitkeep
+reports/tablas/*
+!reports/tablas/.gitkeep
+
+# IDEs y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos de sistema operativo
+Thumbs.db
+Desktop.ini
+.DS_Store

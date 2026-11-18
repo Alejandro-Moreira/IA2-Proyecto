@@ -1,0 +1,51 @@
+# ==============================================================================
+# CONFIGURACIÓN GENERAL DEL PROYECTO CITAS FORECAST
+# ==============================================================================
+
+proyecto:
+  nombre: "Citas Forecast"
+  version: "0.1.0"
+  descripcion: "Pronóstico semanal y agregación mensual de demanda de citas médicas"
+
+rutas:
+  raw: "data/raw"
+  interim: "data/interim"
+  processed: "data/processed"
+  tablas_reportes: "reports/tablas"
+  figuras_reportes: "reports/figuras"
+  evidencias: "evidencias"
+
+datos:
+  columnas_anonimizadas:
+    - "fecha_cita"
+    - "estado"
+  definicion_cita_valida:
+    demanda_principal:
+      - "atendida"
+      - "no_asistida"
+    analisis_sensibilidad:
+      - "atendida"
+  regla_asignacion_mes: "jueves"  # mes_objetivo = (semana_inicio + 3 días).month
+  min_semanas_validas_gate: 30
+
+modelos:
+  semillas:
+    - 0
+    - 1
+    - 2
+  lags: [1, 2, 3, 4]
+  ventana_promedio_movil: 4
+  mlp:
+    neuronas_ocultas: 16
+    activacion: "relu"
+    optimizador: "adam"
+    learning_rate: 0.01
+    weight_decay: 0.001
+    paciencia_early_stopping: 20
+    max_epocas: 200
+    val_split_cronologico: 0.20
+
+evaluacion:
+  horizontes_semanales: [1, 2, 3, 4, 5]
+  tipo_ventana: "expansiva"
+  metrica_relativa_principal: "rMAE"
