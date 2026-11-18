@@ -27,6 +27,8 @@ datos:
       - "atendida"
   regla_asignacion_mes: "jueves"  # mes_objetivo = (semana_inicio + 3 días).month
   min_semanas_validas_gate: 30
+  semanas_cierre:
+    - "2025-12-29"  # Receso de fin de año / vacaciones del consultorio
 
 modelos:
   semillas:
