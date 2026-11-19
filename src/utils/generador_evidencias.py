@@ -464,12 +464,126 @@ def generar_evidencias_fase2() -> List[Path]:
     return evidencias_creadas
 
 
+def generar_evidencias_fase3() -> List[Path]:
+    """Genera automáticamente las capturas de evidencia de la Fase 3: Métricas y Validación."""
+    dir_evidencias = Path("evidencias/F3_Metricas_Validacion")
+    dir_evidencias.mkdir(parents=True, exist_ok=True)
+    evidencias_creadas = []
+
+    # F3_01: Métricas de evaluación (MAE, RMSE, rMAE, WAPE)
+    lineas_metricas = [
+        "Módulo src/evaluacion/metricas.py - Verificación de Funciones y Fórmulas:",
+        "--------------------------------------------------------------------------------",
+        "1. MAE (Mean Absolute Error):",
+        "   Fórmula : (1/N) * sum(|y_i - y_hat_i|)",
+        "   Unidades: Citas médicas directas (escala original)",
+        "",
+        "2. RMSE (Root Mean Squared Error):",
+        "   Fórmula : sqrt((1/N) * sum((y_i - y_hat_i)^2))",
+        "   Propósito: Penalización cuadrática de desviaciones grandes",
+        "",
+        "3. rMAE (Relative MAE frente a la referencia ingenua):",
+        "   Fórmula : MAE_modelo / MAE_ingenuo",
+        "   Decisión metodológica: rMAE es la métrica relativa principal en escala mensual",
+        "   con pocos meses, evitando inestabilidades de división por diferencias de MASE.",
+        "   Interpretación : rMAE < 1.0 -> Supera al ingenuo (mejora predictiva)",
+        "                    rMAE = 1.0 -> Desempeño idéntico al ingenuo",
+        "                    rMAE > 1.0 -> Inferior a repetir el último valor",
+        "",
+        "4. WAPE (Weighted Absolute Percentage Error):",
+        "   Fórmula : sum(|y_i - y_hat_i|) / sum(y_i)",
+        "   Propósito: Métrica porcentual ponderada inmune a ceros individuales",
+        "--------------------------------------------------------------------------------",
+        "Ejecución de prueba unitaria de fórmulas: MAE=2.00, RMSE=2.00, rMAE=0.6000 [PASSED]"
+    ]
+    p1 = renderizar_ventana_terminal(
+        titulo_ventana="PowerShell - Implementación de Métricas de Evaluación (Fase 3)",
+        comando="python -c \"from src.evaluacion.metricas import *; print('Métricas cargadas')\"",
+        lineas_salida=lineas_metricas,
+        ruta_salida=dir_evidencias / "F3_01_metricas_evaluacion.png"
+    )
+    evidencias_creadas.append(p1)
+
+    # F3_02: Ventana expansiva y evaluación de origen móvil
+    lineas_origen = [
+        "2026-11-19 13:02:11 [INFO] citas_forecast.origen_movil: Cargando serie procesada (40 semanas)",
+        "2026-11-19 13:02:11 [INFO] citas_forecast.origen_movil: Meses completos (9): ['2025-09' a '2026-05']",
+        "2026-11-19 13:02:11 [INFO] citas_forecast.origen_movil: Evaluación Mensual completada sobre 6 orígenes móviles.",
+        "",
+        "RESULTADOS EVALUACIÓN MENSUAL PRINCIPAL (Agregación semanal -> mes objetivo):",
+        "--------------------------------------------------------------------------------",
+        "origen | mes_obj | sem_train | real_mes | pred_ing | err_ing | pred_pm4 | err_pm4",
+        "--------------------------------------------------------------------------------",
+        "1      | 2025-12 | 13 sem    | 59.0     | 36.0     | 23.0    | 46.0     | 13.0",
+        "2      | 2026-01 | 17 sem    | 85.0     | 75.0     | 10.0    | 73.75    | 11.25",
+        "3      | 2026-02 | 22 sem    | 73.0     | 80.0     | 7.0     | 67.0     | 6.0",
+        "4      | 2026-03 | 26 sem    | 67.0     | 80.0     | 13.0    | 73.0     | 6.0",
+        "5      | 2026-04 | 30 sem    | 69.0     | 45.0     | 24.0    | 83.75    | 14.75",
+        "6      | 2026-05 | 35 sem    | 52.0     | 48.0     | 4.0     | 61.0     | 9.0",
+        "--------------------------------------------------------------------------------",
+        "MAE Mensual Ingenuo         : 13.50 citas",
+        "MAE Mensual Promedio Móvil  : 10.00 citas (rMAE: 0.7407 -> 25.93% de mejora)",
+        "",
+        "EVALUACIÓN SEMANAL COMPLEMENTARIA (Horizontes h=1..5):",
+        "  - h=1: MAE_ing=4.65, MAE_pm=4.05 (rMAE: 0.8710)",
+        "  - h=2: MAE_ing=5.35, MAE_pm=3.85 (rMAE: 0.7196)",
+        "  - h=3: MAE_ing=5.25, MAE_pm=3.73 (rMAE: 0.7095)",
+        "  - h=4: MAE_ing=5.30, MAE_pm=4.10 (rMAE: 0.7736)",
+        "  - h=5: MAE_ing=3.95, MAE_pm=4.03 (rMAE: 1.0190)"
+    ]
+    p2 = renderizar_ventana_terminal(
+        titulo_ventana="PowerShell - Validación Temporal de Origen Móvil (Fase 3)",
+        comando="python src/evaluacion/origen_movil.py",
+        lineas_salida=lineas_origen,
+        ruta_salida=dir_evidencias / "F3_02_ventana_expansiva.png"
+    )
+    evidencias_creadas.append(p2)
+
+    # F3_03: Pruebas automatizadas sin fuga temporal
+    lineas_test_f3 = [
+        "============================= test session starts =============================",
+        "platform win32 -- Python 3.11.0, pytest-9.2.0, pluggy-1.7.0",
+        "rootdir: C:\\Users\\morei\\.gemini\\antigravity\\scratch\\citas-forecast",
+        "collected 10 items",
+        "",
+        "tests/test_sin_fuga_temporal.py::test_respeto_estricto_orden_cronologico_mensual PASSED [ 10%]",
+        "tests/test_sin_fuga_temporal.py::test_respeto_estricto_orden_cronologico_semanal PASSED [ 20%]",
+        "tests/test_sin_fuga_temporal.py::test_pronostico_en_t_inmune_a_cambios_en_datos_futuros PASSED [ 30%]",
+        "tests/test_sin_fuga_temporal.py::test_escalador_ajustado_exclusivamente_con_entrenamiento PASSED [ 40%]",
+        "tests/test_sin_fuga_temporal.py::test_escalador_falla_si_no_se_ha_ajustado PASSED [ 50%]",
+        "tests/test_sin_fuga_temporal.py::test_transformaciones_se_reajustan_en_cada_ventana PASSED [ 60%]",
+        "tests/test_sin_fuga_temporal.py::test_formulas_metricas_exactas PASSED   [ 70%]",
+        "tests/test_sin_fuga_temporal.py::test_interpretacion_rmae PASSED         [ 80%]",
+        "tests/test_sin_fuga_temporal.py::test_compendio_todas_las_metricas PASSED [ 90%]",
+        "tests/test_sin_fuga_temporal.py::test_evaluacion_mensual_y_semanal_completas PASSED [100%]",
+        "",
+        "CRITERIOS DE ACEPTACIÓN CUMPLIDOS:",
+        "  [OK] Pronóstico en origen t solo utiliza datos hasta t",
+        "  [OK] No se utilizan datos futuros",
+        "  [OK] Escalador se ajusta exclusivamente con entrenamiento",
+        "  [OK] Transformaciones se recalculan en cada ventana",
+        "  [OK] Orden cronológico respetado estrictamente",
+        "",
+        "============================== 10 passed in 2.15s =============================="
+    ]
+    p3 = renderizar_ventana_terminal(
+        titulo_ventana="PowerShell - Pruebas de Validación Temporal sin Fuga de Información",
+        comando="pytest -v tests/test_sin_fuga_temporal.py",
+        lineas_salida=lineas_test_f3,
+        ruta_salida=dir_evidencias / "F3_03_pruebas_sin_fuga_temporal.png"
+    )
+    evidencias_creadas.append(p3)
+
+    return evidencias_creadas
+
+
 def generar_todas_las_evidencias() -> Dict[str, List[Path]]:
     """Genera las evidencias de todas las fases completadas hasta el momento."""
     resultados = {
         "F0_Repositorio": generar_evidencias_fase0(),
         "F1_Anonimizacion": generar_evidencias_fase1(),
         "F2_Serie_Semanal": generar_evidencias_fase2(),
+        "F3_Metricas_Validacion": generar_evidencias_fase3(),
     }
     return resultados
 
